@@ -5,17 +5,11 @@ from io import BytesIO
 
 # Función para procesar el archivo Excel
 def procesar_excel(archivo):
-    # Leer la hoja específica llamada 'CORRIENTE' desde la fila 2 (índice 1)
-    df = pd.read_excel(archivo, sheet_name='CORRIENTE', header=1)
+    # Leer la hoja 'CORRIENTE' desde la fila 2 (índice 1) y seleccionar las columnas I y K
+    df = pd.read_excel(archivo, sheet_name='CORRIENTE', header=1, usecols="I:K")
 
-    # Asegúrate de que no haya espacios en los nombres de las columnas
-    df.columns = df.columns.str.strip()
-
-    # Seleccionar las columnas específicas
-    if 'RECIBO' not in df.columns or 'VALOR' not in df.columns:
-        st.error(
-            "Las columnas 'RECIBO' y 'VALOR' no se encontraron en la hoja 'CORRIENTE'. Verifica los nombres de las columnas.")
-        return None
+    # Renombrar las columnas para hacerlas más fáciles de manejar
+    df.columns = ['RECIBO', 'VALOR']
 
     # Crear un DataFrame vacío para almacenar los datos procesados
     df_nuevo = pd.DataFrame(columns=df.columns)
