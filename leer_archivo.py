@@ -5,17 +5,26 @@ from io import BytesIO
 
 # Función para procesar el archivo Excel
 def procesar_excel(archivo):
-    # Leer la hoja 'CORRIENTE' desde la fila 2 (índice 1) y seleccionar las columnas I y K
-    df = pd.read_excel(archivo, sheet_name='CORRIENTE', header=1, usecols="I:K")
+    # Leer el archivo completo desde la hoja 'CORRIENTE'
+    df = pd.read_excel(archivo, sheet_name='CORRIENTE', header=1)
 
-    # Renombrar las columnas para hacerlas más fáciles de manejar
-    df.columns = ['RECIBO', 'VALOR']
+    # Asegurarse de que no haya espacios en los nombres de las columnas
+    df.columns = df.columns.str.strip()
+
+    # Buscar las columnas 'RECIBO' y 'VALOR'
+    if 'RECIBO' not in df.columns or 'VALOR' not in df.columns:
+        st.error(
+            "Las columnas 'RECIBO' y 'VALOR' no se encontraron en la hoja 'CORRIENTE'. Verifica los nombres de las columnas.")
+        return None
+
+    # Filtrar solo las columnas que nos interesan
+    df_seleccionado = df[['RECIBO', 'VALOR'] + [col for col in df.columns if col not in ['RECIBO', 'VALOR']]]
 
     # Crear un DataFrame vacío para almacenar los datos procesados
-    df_nuevo = pd.DataFrame(columns=df.columns)
+    df_nuevo = pd.DataFrame(columns=df_seleccionado.columns)
 
     # Iterar sobre cada fila en el DataFrame original
-    for index, row in df.iterrows():
+    for index, row in df_seleccionado.iterrows():
         # Separar los recibos si hay más de uno en la misma celda
         recibos = str(row['RECIBO']).split('-')
 
