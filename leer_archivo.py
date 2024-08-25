@@ -8,8 +8,8 @@ def procesar_excel(archivo):
     # Leer el archivo de Excel
     df = pd.read_excel(archivo, sheet_name='CORRIENTE')
 
-    # Crear un nuevo DataFrame para almacenar los datos procesados
-    nuevo_df = pd.DataFrame()
+    # Crear una lista para almacenar los datos procesados
+    filas = []
 
     # Iterar sobre cada fila del DataFrame original
     for index, row in df.iterrows():
@@ -18,7 +18,10 @@ def procesar_excel(archivo):
         for recibo in recibos:
             nueva_fila = row.copy()
             nueva_fila['RECIBO'] = recibo
-            nuevo_df = nuevo_df.append(nueva_fila, ignore_index=True)
+            filas.append(nueva_fila)
+
+    # Crear un nuevo DataFrame a partir de la lista de filas
+    nuevo_df = pd.DataFrame(filas)
 
     return nuevo_df
 
