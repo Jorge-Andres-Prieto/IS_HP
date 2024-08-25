@@ -3,7 +3,6 @@ import pandas as pd
 import openpyxl
 import re
 
-
 def process_excel_file(uploaded_file):
     # Leer el archivo de Excel
     df = pd.read_excel(uploaded_file, sheet_name='CORRIENTE')
@@ -17,13 +16,16 @@ def process_excel_file(uploaded_file):
 
         # Verificar si la columna VALOR contiene una fórmula con operaciones matemáticas
         if isinstance(row['VALOR'], str) and re.match(r"^=[\d+\-\*/]+$", row['VALOR']):
-            # Extraer los números de la fórmula
+            # Extraer los números de la fórmula y el operador matemático
             valores = re.findall(r'\d+', row['VALOR'])
-            if len(valores) == len(recibos):
+            operador = re.findall(r'[\+\-]', row['VALOR'])
+
+            if len(valores) == 2 and len(operador) == 1:
+                # Asignar los valores separados a las filas correspondientes
                 for i, recibo in enumerate(recibos):
                     new_row = row.copy()
                     new_row['RECIBO'] = recibo
-                    new_row['VALOR'] = valores[i]
+                    new_row['VALOR'] = valores[i]  # Asignar el valor correspondiente
                     new_dfs.append(new_row)
             else:
                 # Si no coincide la cantidad de recibos con los valores, usar el valor completo
@@ -56,7 +58,6 @@ def process_excel_file(uploaded_file):
             file_name=new_file_name,
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-
 
 # Interfaz de usuario de Streamlit
 st.title("Procesador de Excel")
