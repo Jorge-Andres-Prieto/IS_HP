@@ -10,20 +10,7 @@ def separar_recibos(file):
         st.error("La columna 'RECIBO' no se encontró en el archivo.")
         return None
 
-    # Crear una lista para almacenar los nuevos DataFrames
-    new_dfs = []
-
-    for index, row in df.iterrows():
-        recibos = row['RECIBO'].split('-')
-        for recibo in recibos:
-            new_row = row.copy()
-            new_row['RECIBO'] = recibo
-            new_dfs.append(new_row)
-
-    # Concatenar los nuevos DataFrames en uno solo
-    new_df = pd.DataFrame(new_dfs)
-
-    return new_df
+    # Resto del código...
 
 def main():
     st.title("Separador de Recibos")
@@ -36,19 +23,21 @@ def main():
 
         if st.button("Separar Recibos"):
             new_df = separar_recibos(uploaded_file)
-            st.dataframe(new_df)
 
-            # Crear el nombre del nuevo archivo
-            new_filename = "A_" + uploaded_file.name
+            if new_df is not None:
+                # Crear el nombre del nuevo archivo
+                new_filename = "A_" + uploaded_file.name
 
-            # Descargar el nuevo archivo
-            csv = new_df.to_csv(index=False)
-            st.download_button(
-                label="Descargar archivo modificado",
-                data=csv,
-                file_name=new_filename,
-                mime='text/csv',
-            )
+                # Descargar el nuevo archivo
+                csv = new_df.to_csv(index=False)
+                st.download_button(
+                    label="Descargar archivo modificado",
+                    data=csv,
+                    file_name=new_filename,
+                    mime='text/csv',
+                )
+            else:
+                st.error("No se pudo separar los recibos debido a la ausencia de la columna 'RECIBO'.")
 
 if __name__ == "__main__":
     main()
