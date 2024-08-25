@@ -3,6 +3,11 @@ import pandas as pd
 import openpyxl
 
 
+def evaluate_formula(formula):
+    # Evaluar la fórmula para obtener el resultado numérico
+    return eval(formula)
+
+
 def process_excel_file(uploaded_file):
     # Leer el archivo de Excel
     df = pd.read_excel(uploaded_file, sheet_name='CORRIENTE')
@@ -13,22 +18,32 @@ def process_excel_file(uploaded_file):
     # Iterar sobre cada fila
     for index, row in df.iterrows():
         recibos = str(row['RECIBO']).split('-')
-        valores = None
+        valor = row['VALOR']
 
-        # Si la celda en 'VALOR' contiene una fórmula
-        if isinstance(row['VALOR'], str) and '-' in row['VALOR']:
-            valores = row['VALOR'].split('-')
+        # Verificar si el valor es una fórmula y procesarla
+        if isinstance(valor, str) and valor.startswith('='):
+            # Quitar el signo '=' y separar la fórmula en base a '+' o '-'
+            if '+' in valor:
+                operandos = valor[1:].split('+')
+            elif '-' in valor:
+                operandos = valor[1:].split('-')
+            else:
+                operandos = [valor[1:]]
 
+            # Evaluar los operandos
+            operandos = [evaluate_formula(op.strip()) for op in operandos]
+        else:
+            operandos = [valor]
+
+        # Asegurar que tenemos suficientes valores para asignar a los recibos
+        while len(operandos) < len(recibos):
+            operandos.append(0)  # O algún otro valor por defecto
+
+        # Crear nuevas filas con los recibos y valores correspondientes
         for i, recibo in enumerate(recibos):
             new_row = row.copy()
             new_row['RECIBO'] = recibo
-
-            # Asignar el valor correcto a la nueva fila
-            if valores:
-                if i < len(valores):
-                    new_row['VALOR'] = valores[i]
-                else:
-                    new_row['VALOR'] = valores[-1]  # Usar el último valor si hay menos valores que recibos
+            new_row['VALOR'] = operandos[i] if i < len(operandos) else operandos[-1]
             new_dfs.append(new_row)
 
     # Concatenar los nuevos dataframes en uno solo
