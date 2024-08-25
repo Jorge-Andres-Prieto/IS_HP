@@ -3,6 +3,13 @@ import pandas as pd
 import openpyxl
 
 def process_excel_file(uploaded_file):
+    """
+    Procesa un archivo Excel, separando los valores de RECIBO y VALOR, y creando nuevas filas.
+
+    Args:
+        uploaded_file: El archivo Excel subido por el usuario.
+    """
+
     # Leer el archivo de Excel
     df = pd.read_excel(uploaded_file, sheet_name='CORRIENTE')
 
@@ -12,9 +19,20 @@ def process_excel_file(uploaded_file):
     # Iterar sobre cada fila
     for index, row in df.iterrows():
         recibos = str(row['RECIBO']).split('-')
-        for recibo in recibos:
+        valores = str(row['VALOR']).split('-')  # Separar los valores de la fórmula
+
+        for i in range(len(recibos)):
             new_row = row.copy()
-            new_row['RECIBO'] = recibo
+            new_row['RECIBO'] = recibos[i]
+            # Evaluar la fórmula si es necesario
+            if len(valores) > 1:
+                try:
+                    new_row['VALOR'] = eval(valores[i])
+                except:
+                    # Manejar errores de evaluación
+                    new_row['VALOR'] = valores[i]
+            else:
+                new_row['VALOR'] = row['VALOR']
             new_dfs.append(new_row)
 
     # Concatenar los nuevos dataframes en uno solo
