@@ -5,6 +5,11 @@ def separar_recibos(file):
     # Leer el archivo Excel
     df = pd.read_excel(file)
 
+    # Verificar si la columna 'RECIBO' existe
+    if 'RECIBO' not in df.columns:
+        st.error("La columna 'RECIBO' no se encontró en el archivo.")
+        return None
+
     # Crear una lista para almacenar los nuevos DataFrames
     new_dfs = []
 
