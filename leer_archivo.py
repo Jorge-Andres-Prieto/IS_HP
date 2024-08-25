@@ -1,4 +1,3 @@
-Python
 import streamlit as st
 import pandas as pd
 import re
@@ -23,7 +22,7 @@ def process_excel_file(uploaded_file):
         valor_str = str(row['VALOR'])
 
         # Extraer los valores numéricos de la fórmula
-        match = re.search(r'(\d+(\.\d+)?)([+-]?)(\d+(\.\d+)?)', valor_str)
+        match = re.search(r'=(\d+(\.\d+)?)([+-]?)(\d+(\.\d+)?)', valor_str)
         if match:
             valor1, op, valor2 = match.groups()
             valores = [eval(valor1), eval(valor2)]
