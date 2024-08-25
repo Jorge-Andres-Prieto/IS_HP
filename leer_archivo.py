@@ -3,17 +3,14 @@ import streamlit as st
 from io import BytesIO
 import openpyxl
 
-def process_excel(uploaded_file):
+def process_excel(uploaded_file, recibo_col):
     # Leer el archivo Excel
     df = pd.read_excel(uploaded_file)
-
-    # Encontrar el índice de la columna 'RECIBO' (asumiendo que el nombre está en formato numérico)
-    recibo_col = df.columns[df.columns.astype(str) == 'RECIBO'].tolist()[0]
 
     # Función para separar los valores de RECIBO y crear nuevas filas
     def split_recibos(row):
         recibos = str(row[recibo_col]).split('-')
-        return pd.DataFrame([row.to_dict() | {'RECIBO': r} for r in recibos])
+        return pd.DataFrame([row.to_dict() | {recibo_col: r} for r in recibos])
 
     # Aplicar la función a cada fila y concatenar los resultados
     new_df = pd.concat(df.apply(split_recibos, axis=1).tolist(), ignore_index=True)
@@ -36,8 +33,14 @@ def main():
         df = pd.read_excel(uploaded_file)
         st.dataframe(df.head())
 
+        # Obtener las columnas del DataFrame
+        columns = df.columns.tolist()
+
+        # Permitir al usuario seleccionar la columna RECIBO
+        recibo_col = st.selectbox("Selecciona la columna RECIBO", columns)
+
         if st.button("Procesar archivo"):
-            processed_data = process_excel(uploaded_file)
+            processed_data = process_excel(uploaded_file, recibo_col)
             st.download_button(
                 label="Descargar archivo procesado",
                 data=processed_data,
