@@ -1,51 +1,46 @@
 import pandas as pd
+from openpyxl import load_workbook
 import streamlit as st
-from io import BytesIO
-import openpyxl
 
-def process_excel(uploaded_file, recibo_col):
-    # Leer el archivo Excel
-    df = pd.read_excel(uploaded_file)
+def process_excel_file(file):
+    # Cargar el archivo de Excel
+    wb = load_workbook(file)
+    ws = wb['Corriente']
 
-    # Función para separar los valores de RECIBO y crear nuevas filas
+    # Crear un nuevo DataFrame para almacenar los datos procesados
+    df = pd.DataFrame(ws.values, columns=ws[1])
+
+    # Convertir la columna 'RECIBO' a string para facilitar el procesamiento
+    df['RECIBO'] = df['RECIBO'].astype(str)
+
+    # Función para dividir los números de recibo y crear nuevas filas
     def split_recibos(row):
-        recibos = str(row[recibo_col]).split('-')
-        return pd.DataFrame([row.to_dict() | {recibo_col: r} for r in recibos])
+        recibos = row['RECIBO'].split('-')
+        return pd.DataFrame([row.to_dict() | {'RECIBO': recibo}] for recibo in recibos)
 
     # Aplicar la función a cada fila y concatenar los resultados
-    new_df = pd.concat(df.apply(split_recibos, axis=1).tolist(), ignore_index=True)
+    df = pd.concat(df.apply(split_recibos, axis=1).tolist(), ignore_index=True)
 
-    # Crear un buffer para guardar el nuevo DataFrame en Excel
-    output = BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        new_df.to_excel(writer, index=False)
+    # Crear un nuevo nombre de archivo
+    new_filename = 'A' + file.name
+
+    # Guardar el nuevo DataFrame en un archivo de Excel
+    with pd.ExcelWriter(new_filename, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False)
 
     # Descargar el archivo
-    output.seek(0)
-    return output
+    with open(new_filename, "rb") as f:
+        st.download_button(
+            label="Descargar archivo procesado",
+            data=f,
+            file_name=new_filename,
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
-def main():
-    st.title("Separador de Recibos en Excel")
+# Interfaz de usuario de Streamlit
+st.title("Procesador de Excel")
 
-    uploaded_file = st.file_uploader("Selecciona un archivo Excel", type=["xlsx"])
+uploaded_file = st.file_uploader("Sube tu archivo de Excel", type=["xlsx"])
 
-    if uploaded_file is not None:
-        df = pd.read_excel(uploaded_file)
-        st.dataframe(df.head())
-
-        # Obtener las columnas del DataFrame
-        columns = df.columns.tolist()
-
-        # Permitir al usuario seleccionar la columna RECIBO
-        recibo_col = st.selectbox("Selecciona la columna RECIBO", columns)
-
-        if st.button("Procesar archivo"):
-            processed_data = process_excel(uploaded_file, recibo_col)
-            st.download_button(
-                label="Descargar archivo procesado",
-                data=processed_data,
-                file_name=f"A_{uploaded_file.name}"
-            )
-
-if __name__ == "__main__":
-    main()
+if uploaded_file is not None:
+    process_excel_file(uploaded_file)
