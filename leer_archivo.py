@@ -7,26 +7,21 @@ def process_excel_file(file):
     wb = load_workbook(file)
     ws = wb['Corriente']
 
-    # Crear un nuevo DataFrame para almacenar los datos procesados
-    df = pd.DataFrame(ws.values, columns=ws[1])
+    # Crear un DataFrame solo con la columna 'RECIBO'
+    df_recibos = pd.DataFrame(ws['RECIBO'])
 
-    # Convertir la columna 'RECIBO' a string para facilitar el procesamiento
-    df['RECIBO'] = df['RECIBO'].astype(str)
+    # Convertir la columna a string y dividir los valores
+    df_recibos['RECIBO'] = df_recibos['RECIBO'].astype(str).str.split('-')
 
-    # Función para dividir los números de recibo y crear nuevas filas
-    def split_recibos(row):
-        recibos = row['RECIBO'].split('-')
-        return pd.DataFrame([row.to_dict() | {'RECIBO': recibo}] for recibo in recibos)
-
-    # Aplicar la función a cada fila y concatenar los resultados
-    df = pd.concat(df.apply(split_recibos, axis=1).tolist(), ignore_index=True)
+    # Crear un nuevo DataFrame para almacenar los recibos individuales
+    df_new = pd.DataFrame(df_recibos['RECIBO'].explode())
 
     # Crear un nuevo nombre de archivo
     new_filename = 'A' + file.name
 
     # Guardar el nuevo DataFrame en un archivo de Excel
     with pd.ExcelWriter(new_filename, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False)
+        df_new.to_excel(writer, index=False, header=['RECIBO'])
 
     # Descargar el archivo
     with open(new_filename, "rb") as f:
