@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import openpyxl
 
+
 def process_excel_file(uploaded_file):
     # Leer el archivo de Excel
     df = pd.read_excel(uploaded_file, sheet_name='CORRIENTE')
@@ -12,9 +13,22 @@ def process_excel_file(uploaded_file):
     # Iterar sobre cada fila
     for index, row in df.iterrows():
         recibos = str(row['RECIBO']).split('-')
-        for recibo in recibos:
+        valores = None
+
+        # Si la celda en 'VALOR' contiene una fórmula
+        if isinstance(row['VALOR'], str) and '-' in row['VALOR']:
+            valores = row['VALOR'].split('-')
+
+        for i, recibo in enumerate(recibos):
             new_row = row.copy()
             new_row['RECIBO'] = recibo
+
+            # Asignar el valor correcto a la nueva fila
+            if valores:
+                if i < len(valores):
+                    new_row['VALOR'] = valores[i]
+                else:
+                    new_row['VALOR'] = valores[-1]  # Usar el último valor si hay menos valores que recibos
             new_dfs.append(new_row)
 
     # Concatenar los nuevos dataframes en uno solo
@@ -36,6 +50,7 @@ def process_excel_file(uploaded_file):
             file_name=new_file_name,
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
+
 
 # Interfaz de usuario de Streamlit
 st.title("Procesador de Excel")
