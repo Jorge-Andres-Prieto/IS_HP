@@ -1,11 +1,7 @@
 import streamlit as st
 import pandas as pd
 import openpyxl
-
-
-def evaluate_formula(formula):
-    # Evaluar la fórmula para obtener el resultado numérico
-    return eval(formula)
+import re
 
 
 def process_excel_file(uploaded_file):
@@ -18,33 +14,28 @@ def process_excel_file(uploaded_file):
     # Iterar sobre cada fila
     for index, row in df.iterrows():
         recibos = str(row['RECIBO']).split('-')
-        valor = row['VALOR']
 
-        # Verificar si el valor es una fórmula y procesarla
-        if isinstance(valor, str) and valor.startswith('='):
-            # Quitar el signo '=' y separar la fórmula en base a '+' o '-'
-            if '+' in valor:
-                operandos = valor[1:].split('+')
-            elif '-' in valor:
-                operandos = valor[1:].split('-')
+        # Verificar si la columna VALOR contiene una fórmula con operaciones matemáticas
+        if isinstance(row['VALOR'], str) and re.match(r"^=[\d+\-\*/]+$", row['VALOR']):
+            # Extraer los números de la fórmula
+            valores = re.findall(r'\d+', row['VALOR'])
+            if len(valores) == len(recibos):
+                for i, recibo in enumerate(recibos):
+                    new_row = row.copy()
+                    new_row['RECIBO'] = recibo
+                    new_row['VALOR'] = valores[i]
+                    new_dfs.append(new_row)
             else:
-                operandos = [valor[1:]]
-
-            # Evaluar los operandos
-            operandos = [evaluate_formula(op.strip()) for op in operandos]
+                # Si no coincide la cantidad de recibos con los valores, usar el valor completo
+                for recibo in recibos:
+                    new_row = row.copy()
+                    new_row['RECIBO'] = recibo
+                    new_dfs.append(new_row)
         else:
-            operandos = [valor]
-
-        # Asegurar que tenemos suficientes valores para asignar a los recibos
-        while len(operandos) < len(recibos):
-            operandos.append(0)  # O algún otro valor por defecto
-
-        # Crear nuevas filas con los recibos y valores correspondientes
-        for i, recibo in enumerate(recibos):
-            new_row = row.copy()
-            new_row['RECIBO'] = recibo
-            new_row['VALOR'] = operandos[i] if i < len(operandos) else operandos[-1]
-            new_dfs.append(new_row)
+            for recibo in recibos:
+                new_row = row.copy()
+                new_row['RECIBO'] = recibo
+                new_dfs.append(new_row)
 
     # Concatenar los nuevos dataframes en uno solo
     new_df = pd.DataFrame(new_dfs)
