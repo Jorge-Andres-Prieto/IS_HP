@@ -2,15 +2,39 @@ import pandas as pd
 import streamlit as st
 
 def separar_recibos(file):
+    """Separa los recibos en una nueva fila por cada valor de recibo.
+
+    Args:
+        file: El archivo Excel a procesar.
+
+    Returns:
+        Un nuevo DataFrame con los recibos separados, o None si no se encuentra la columna 'RECIBO'.
+    """
+
     # Leer el archivo Excel
     df = pd.read_excel(file)
 
-    # Verificar si la columna 'RECIBO' existe
-    if 'RECIBO' not in df.columns:
+    # Buscar la columna 'RECIBO' en cualquier posición
+    try:
+        recibo_col = df.columns[df.columns.str.contains('RECIBO', case=False)].tolist()[0]
+    except IndexError:
         st.error("La columna 'RECIBO' no se encontró en el archivo.")
         return None
 
-    # Resto del código...
+    # Crear una lista para almacenar los nuevos DataFrames
+    new_dfs = []
+
+    for index, row in df.iterrows():
+        recibos = str(row[recibo_col]).split('-')
+        for recibo in recibos:
+            new_row = row.copy()
+            new_row[recibo_col] = recibo
+            new_dfs.append(new_row)
+
+    # Concatenar los nuevos DataFrames en uno solo
+    new_df = pd.DataFrame(new_dfs)
+
+    return new_df
 
 def main():
     st.title("Separador de Recibos")
