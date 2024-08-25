@@ -1,67 +1,48 @@
 import pandas as pd
 import streamlit as st
+from io import BytesIO
+import openpyxl
 
-def separar_recibos(file):
-    """Separa los recibos en una nueva fila por cada valor de recibo.
-
-    Args:
-        file: El archivo Excel a procesar.
-
-    Returns:
-        Un nuevo DataFrame con los recibos separados, o None si no se encuentra la columna 'RECIBO'.
-    """
-
+def process_excel(uploaded_file):
     # Leer el archivo Excel
-    df = pd.read_excel(file)
+    df = pd.read_excel(uploaded_file)
 
-    # Buscar la columna 'RECIBO' en cualquier posición
-    try:
-        recibo_col = df.columns[df.columns.str.contains('RECIBO', case=False)].tolist()[0]
-    except IndexError:
-        st.error("La columna 'RECIBO' no se encontró en el archivo.")
-        return None
+    # Encontrar el índice de la columna 'RECIBO' (asumiendo que el nombre está en formato numérico)
+    recibo_col = df.columns[df.columns.astype(str) == 'RECIBO'].tolist()[0]
 
-    # Crear una lista para almacenar los nuevos DataFrames
-    new_dfs = []
-
-    for index, row in df.iterrows():
+    # Función para separar los valores de RECIBO y crear nuevas filas
+    def split_recibos(row):
         recibos = str(row[recibo_col]).split('-')
-        for recibo in recibos:
-            new_row = row.copy()
-            new_row[recibo_col] = recibo
-            new_dfs.append(new_row)
+        return pd.DataFrame([row.to_dict() | {'RECIBO': r} for r in recibos])
 
-    # Concatenar los nuevos DataFrames en uno solo
-    new_df = pd.DataFrame(new_dfs)
+    # Aplicar la función a cada fila y concatenar los resultados
+    new_df = pd.concat(df.apply(split_recibos, axis=1).tolist(), ignore_index=True)
 
-    return new_df
+    # Crear un buffer para guardar el nuevo DataFrame en Excel
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        new_df.to_excel(writer, index=False)
+
+    # Descargar el archivo
+    output.seek(0)
+    return output
 
 def main():
-    st.title("Separador de Recibos")
+    st.title("Separador de Recibos en Excel")
 
-    uploaded_file = st.file_uploader("Sube tu archivo Excel", type=["xlsx"])
+    uploaded_file = st.file_uploader("Selecciona un archivo Excel", type=["xlsx"])
 
     if uploaded_file is not None:
         df = pd.read_excel(uploaded_file)
-        st.dataframe(df)
+        st.dataframe(df.head())
 
-        if st.button("Separar Recibos"):
-            new_df = separar_recibos(uploaded_file)
-
-            if new_df is not None:
-                # Crear el nombre del nuevo archivo
-                new_filename = "A_" + uploaded_file.name
-
-                # Descargar el nuevo archivo
-                csv = new_df.to_csv(index=False)
-                st.download_button(
-                    label="Descargar archivo modificado",
-                    data=csv,
-                    file_name=new_filename,
-                    mime='text/csv',
-                )
-            else:
-                st.error("No se pudo separar los recibos debido a la ausencia de la columna 'RECIBO'.")
+        if st.button("Procesar archivo"):
+            processed_data = process_excel(uploaded_file)
+            st.download_button(
+                label="Descargar archivo procesado",
+                data=processed_data,
+                file_name=f"A_{uploaded_file.name}"
+            )
 
 if __name__ == "__main__":
     main()
