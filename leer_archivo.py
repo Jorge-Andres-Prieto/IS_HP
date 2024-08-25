@@ -1,68 +1,53 @@
-import streamlit as st
 import pandas as pd
+import streamlit as st
 from io import BytesIO
 
 
-# Función para procesar el archivo Excel
+# Función para procesar el archivo de Excel
 def procesar_excel(archivo):
-    # Leer el archivo completo desde la hoja 'CORRIENTE'
-    df = pd.read_excel(archivo, sheet_name='CORRIENTE', header=1)
+    # Leer el archivo de Excel
+    df = pd.read_excel(archivo, sheet_name='CORRIENTE')
 
-    # Asegurarse de que no haya espacios en los nombres de las columnas
-    df.columns = df.columns.str.strip()
+    # Crear un nuevo DataFrame para almacenar los datos procesados
+    nuevo_df = pd.DataFrame()
 
-    # Buscar las columnas 'RECIBO' y 'VALOR'
-    if 'RECIBO' not in df.columns or 'VALOR' not in df.columns:
-        st.error(
-            "Las columnas 'RECIBO' y 'VALOR' no se encontraron en la hoja 'CORRIENTE'. Verifica los nombres de las columnas.")
-        return None
-
-    # Filtrar solo las columnas que nos interesan
-    df_seleccionado = df[['RECIBO', 'VALOR'] + [col for col in df.columns if col not in ['RECIBO', 'VALOR']]]
-
-    # Crear un DataFrame vacío para almacenar los datos procesados
-    df_nuevo = pd.DataFrame(columns=df_seleccionado.columns)
-
-    # Iterar sobre cada fila en el DataFrame original
-    for index, row in df_seleccionado.iterrows():
-        # Separar los recibos si hay más de uno en la misma celda
+    # Iterar sobre cada fila del DataFrame original
+    for index, row in df.iterrows():
+        # Verificar si hay dos recibos en la columna 'RECIBO'
         recibos = str(row['RECIBO']).split('-')
-
         for recibo in recibos:
-            # Crear una nueva fila con el recibo separado y la misma información
             nueva_fila = row.copy()
-            nueva_fila['RECIBO'] = recibo.strip()  # Eliminar espacios en blanco si los hay
-            df_nuevo = df_nuevo.append(nueva_fila, ignore_index=True)
+            nueva_fila['RECIBO'] = recibo
+            nuevo_df = nuevo_df.append(nueva_fila, ignore_index=True)
 
-    return df_nuevo
+    return nuevo_df
 
 
-# Título de la aplicación
-st.title("Procesador de Excel para RECIBOS y VALOR")
+# Función para descargar el archivo modificado
+def descargar_excel(df, nombre_archivo):
+    buffer = BytesIO()
+    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False)
+    buffer.seek(0)
+    return buffer
 
-# Subir archivo
-archivo_subido = st.file_uploader("Sube tu archivo Excel", type=["xlsx"])
 
-if archivo_subido is not None:
-    # Procesar el archivo subido
+# Interfaz de Streamlit
+st.title('Procesador de Recibos')
+
+# Subir el archivo de Excel
+archivo_subido = st.file_uploader('Sube tu archivo de Excel', type=['xlsx'])
+
+if archivo_subido:
+    # Procesar el archivo
     df_procesado = procesar_excel(archivo_subido)
 
-    if df_procesado is not None:
-        # Mostrar la tabla procesada
-        st.write("Vista previa del archivo procesado:")
-        st.write(df_procesado)
+    # Mostrar el DataFrame procesado en la app
+    st.write('Archivo procesado:')
+    st.dataframe(df_procesado)
 
-        # Botón para descargar el archivo procesado
-        buffer = BytesIO()
-        with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
-            df_procesado.to_excel(writer, index=False)
-            writer.save()
-
-        buffer.seek(0)
-
-        st.download_button(
-            label="Descargar archivo procesado",
-            data=buffer,
-            file_name='A' + archivo_subido.name,
-            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
+    # Descargar el archivo modificado
+    nombre_archivo = 'A' + archivo_subido.name
+    buffer = descargar_excel(df_procesado, nombre_archivo)
+    st.download_button(label='Descargar archivo modificado', data=buffer, file_name=nombre_archivo,
+                       mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
