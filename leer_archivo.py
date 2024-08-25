@@ -5,8 +5,8 @@ from io import BytesIO
 
 # Función para procesar el archivo de Excel
 def procesar_excel(archivo):
-    # Leer el archivo de Excel
-    df = pd.read_excel(archivo, sheet_name='CORRIENTE')
+    # Leer el archivo de Excel, especificando las columnas como texto (str)
+    df = pd.read_excel(archivo, sheet_name='CORRIENTE', dtype={'RECIBO': str})
 
     # Crear una lista para almacenar los datos procesados
     filas = []
