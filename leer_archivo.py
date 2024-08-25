@@ -1,6 +1,7 @@
+Python
 import streamlit as st
 import pandas as pd
-import openpyxl
+import re
 
 def process_excel_file(uploaded_file):
     """
@@ -19,20 +20,20 @@ def process_excel_file(uploaded_file):
     # Iterar sobre cada fila
     for index, row in df.iterrows():
         recibos = str(row['RECIBO']).split('-')
-        valores = str(row['VALOR']).split('-')  # Separar los valores de la fórmula
+        valor_str = str(row['VALOR'])
+
+        # Extraer los valores numéricos de la fórmula
+        match = re.search(r'(\d+(\.\d+)?)([+-]?)(\d+(\.\d+)?)', valor_str)
+        if match:
+            valor1, op, valor2 = match.groups()
+            valores = [eval(valor1), eval(valor2)]
+        else:
+            valores = [valor_str]
 
         for i in range(len(recibos)):
             new_row = row.copy()
             new_row['RECIBO'] = recibos[i]
-            # Evaluar la fórmula si es necesario
-            if len(valores) > 1:
-                try:
-                    new_row['VALOR'] = eval(valores[i])
-                except:
-                    # Manejar errores de evaluación
-                    new_row['VALOR'] = valores[i]
-            else:
-                new_row['VALOR'] = row['VALOR']
+            new_row['VALOR'] = valores[i]
             new_dfs.append(new_row)
 
     # Concatenar los nuevos dataframes en uno solo
