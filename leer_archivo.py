@@ -1,41 +1,46 @@
-import pandas as pd
-from openpyxl import load_workbook
 import streamlit as st
+import pandas as pd
+import openpyxl
 
-def process_excel_file(file):
-    # Cargar el archivo de Excel
-    wb = load_workbook(file)
-    ws = wb['Corriente']
+def process_excel_file(uploaded_file):
+    # Leer el archivo de Excel
+    df = pd.read_excel(uploaded_file, sheet_name='CORRIENTE')
 
-    # Crear un DataFrame solo con la columna 'RECIBO'
-    df_recibos = pd.DataFrame(ws['RECIBO'])
+    # Crear una lista para almacenar los nuevos dataframes
+    new_dfs = []
 
-    # Convertir la columna a string y dividir los valores
-    df_recibos['RECIBO'] = df_recibos['RECIBO'].astype(str).str.split('-')
+    # Iterar sobre cada fila
+    for index, row in df.iterrows():
+        recibos = str(row['RECIBO']).split('-')
+        for recibo in recibos:
+            new_row = row.copy()
+            new_row['RECIBO'] = recibo
+            new_dfs.append(new_row)
 
-    # Crear un nuevo DataFrame para almacenar los recibos individuales
-    df_new = pd.DataFrame(df_recibos['RECIBO'].explode())
+    # Concatenar los nuevos dataframes en uno solo
+    new_df = pd.DataFrame(new_dfs)
 
     # Crear un nuevo nombre de archivo
-    new_filename = 'A' + file.name
+    file_name = uploaded_file.name
+    new_file_name = "A" + file_name
 
-    # Guardar el nuevo DataFrame en un archivo de Excel
-    with pd.ExcelWriter(new_filename, engine='openpyxl') as writer:
-        df_new.to_excel(writer, index=False, header=['RECIBO'])
+    # Guardar el nuevo dataframe en un nuevo archivo de Excel
+    with pd.ExcelWriter(new_file_name) as writer:
+        new_df.to_excel(writer, sheet_name='CORRIENTE', index=False)
 
     # Descargar el archivo
-    with open(new_filename, "rb") as f:
+    with open(new_file_name, "rb") as f:
         st.download_button(
             label="Descargar archivo procesado",
             data=f,
-            file_name=new_filename,
+            file_name=new_file_name,
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
 # Interfaz de usuario de Streamlit
 st.title("Procesador de Excel")
 
-uploaded_file = st.file_uploader("Sube tu archivo de Excel", type=["xlsx"])
+uploaded_file = st.file_uploader("Sube tu archivo Excel", type=["xlsx"])
 
 if uploaded_file is not None:
     process_excel_file(uploaded_file)
