@@ -1,9 +1,9 @@
 [theme]
 base="dark"
-primaryColor="#008fc4"  # Azul claro para interactividad
+primaryColor="#008fc4"  # Azul claro para elementos interactivos
 backgroundColor="#003041"  # Azul oscuro para el fondo principal
-secondaryBackgroundColor="#004d66"  # Un tono intermedio entre el fondo principal y el color primario
-textColor="#fcfdff"  # Blanco ligeramente azulado para el texto, asegurando legibilidad
+secondaryBackgroundColor="#ff0202"  # Rojo para acentos y elementos secundarios
+textColor="#fcfdff"  # Blanco ligeramente azulado para el texto principal
 font="sans serif"
 
 [theme.fonts]
