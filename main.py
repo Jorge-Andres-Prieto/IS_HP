@@ -11,6 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Aplicar estilos
 st.markdown("""
     <style>
     .stApp {
@@ -18,15 +19,16 @@ st.markdown("""
         color: #003041;
     }
     .stButton>button {
-        background-color: #003041;
+        background-color: #008fc4;
         color: #fcfdff;
     }
     .stTextInput>div>div>input {
-        background-color: #004d66;
+        background-color: #003041;
         color: #fcfdff;
     }
     </style>
     """, unsafe_allow_html=True)
+
 
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
