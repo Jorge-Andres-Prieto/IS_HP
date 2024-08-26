@@ -23,8 +23,8 @@ st.markdown("""
         color: #fcfdff;
     }
     .stTextInput>div>div>input {
-        background-color: #003041;
-        color: #fcfdff;
+        background-color: #fcfdff;
+        color: #003041;
     }
     </style>
     """, unsafe_allow_html=True)
