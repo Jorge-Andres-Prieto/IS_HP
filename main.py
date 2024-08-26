@@ -4,17 +4,27 @@ from login import login
 from leer_archivo import main_program
 
 # Configuración del tema
-st.set_page_config(layout="wide", page_title="HelPharma")
+st.set_page_config(
+    page_title="HelPharma",
+    page_icon="💊",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
-# Aplicar el tema manualmente
+# Aplicar estilos
 st.markdown("""
     <style>
-    :root {
-        --primary-color: #008fc4;
-        --background-color: #003041;
-        --secondary-background-color: #ff0202;
-        --text-color: #fcfdff;
-        --font: sans-serif;
+    .stApp {
+        background-color: #003041;
+        color: #fcfdff;
+    }
+    .stButton>button {
+        background-color: #008fc4;
+        color: #fcfdff;
+    }
+    .stTextInput>div>div>input {
+        background-color: #004d66;
+        color: #fcfdff;
     }
     </style>
     """, unsafe_allow_html=True)
