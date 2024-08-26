@@ -12,22 +12,31 @@ def logout():
     st.session_state['username'] = None
     st.rerun()
 
+
 def main_menu(user):
     with st.sidebar:
         selected = option_menu(
-            menu_title="HelPharma",
+            menu_title=None,  # Quitamos el título del menú
             options=["Home", "Excel"],
-            icons=["house-fill", "file-earmark-excel-fill"],  # Iconos para las opciones
-            menu_icon="capsule",  # Icono para el título
+            icons=["house-door", "file-earmark-spreadsheet"],
+            menu_icon="cast",
             default_index=0,
             styles={
-                "container": {"padding": "5!important", "background-color": "#fafafa"},
-                "icon": {"color": "orange", "font-size": "25px"},
-                "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-                "nav-link-selected": {"background-color": "#02ab21"},
+                "container": {"padding": "0!important", "background-color": "#fafafa"},
+                "icon": {"color": "#0096c7", "font-size": "25px"},
+                "nav-link": {
+                    "font-size": "18px",
+                    "text-align": "left",
+                    "margin": "0px",
+                    "--hover-color": "#eee",
+                    "font-weight": "normal",
+                },
+                "nav-link-selected": {"background-color": "#0096c7", "color": "white"},
             }
         )
-        if st.button("Cerrar Sesión"):
+
+        st.sidebar.markdown("---")
+        if st.sidebar.button("Cerrar Sesión", key="logout"):
             logout()
 
     if selected == "Home":
