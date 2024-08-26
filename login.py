@@ -9,21 +9,6 @@ USERS = {
 def login():
     st.set_page_config(layout="centered", page_title="HelPharma Login")
 
-    st.markdown("""
-    <style>
-    .big-font {
-        font-size:50px !important;
-        font-weight: bold;
-        color: #008fc4;
-        margin-bottom: 20px;
-    }
-    .stButton>button {
-        width: 100%;
-        background-color: #008fc4;
-        color: white;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
 
