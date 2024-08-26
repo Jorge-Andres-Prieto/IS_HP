@@ -11,12 +11,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Aplicar estilos
 st.markdown("""
     <style>
     .stApp {
-        background-color: ##fcfdff;
-        color: #fcfdff;
+        background-color: #fcfdff;
+        color: #003041;
     }
     .stButton>button {
         background-color: #008fc4;
