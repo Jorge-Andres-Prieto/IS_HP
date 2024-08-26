@@ -6,7 +6,7 @@ from leer_archivo import main_program  # Importa tu programa principal
 def main():
     # Inicializa el estado de sesión al iniciar
     if 'logged_in' not in st.session_state:
-        st.session_state['logged_in'] = False
+        st.session_state.logged_in = False
         if not st.session_state['logged_in']:
             login()
         else:
