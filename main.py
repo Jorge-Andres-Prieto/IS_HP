@@ -21,30 +21,10 @@ st.markdown("""
     .stButton>button {
         background-color: #008fc4;
         color: #fcfdff;
-        border: none;
-    }
-    .stButton>button:hover {
-        background-color: #006fa6;
     }
     .stTextInput>div>div>input {
         background-color: #003041;
         color: #fcfdff;
-        border: 1px solid #008fc4;
-    }
-    .stSidebar {
-        background-color: #003041;
-        color: #fcfdff;
-    }
-    .stSidebar .stButton>button {
-        background-color: #008fc4;
-        color: #fcfdff;
-        border: none;
-    }
-    .stSidebar .stButton>button:hover {
-        background-color: #006fa6;
-    }
-    .stMarkdown h1 {
-        color: #003041;
     }
     </style>
     """, unsafe_allow_html=True)
