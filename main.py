@@ -5,23 +5,6 @@ from leer_archivo import main_program
 
 st.set_page_config(layout="wide", page_title="HelPharma")
 
-# Aplicar estilos personalizados
-st.markdown("""
-<style>
-    .stApp {
-        background-color: #003041;
-        color: #fcfdff;
-    }
-    .stButton>button {
-        background-color: #008fc4;
-        color: #fcfdff;
-    }
-    .stTextInput>div>div>input {
-        background-color: #004d66;
-        color: #fcfdff;
-    }
-</style>
-""", unsafe_allow_html=True)
 
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
