@@ -1,6 +1,6 @@
 [theme]
 base="dark"
-primaryColor="#008fc4"  # Azul claro
+primaryColor="#003041"  # Azul claro
 backgroundColor="#fcfdff"  # Blanco ligeramente azulado
 secondaryBackgroundColor="#4c85b7"
 textColor="#003041"  # Azul oscuro
