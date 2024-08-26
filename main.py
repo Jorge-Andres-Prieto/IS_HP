@@ -3,8 +3,21 @@ from streamlit_option_menu import option_menu
 from login import login
 from leer_archivo import main_program
 
+# Configuración del tema
 st.set_page_config(layout="wide", page_title="HelPharma")
 
+# Aplicar el tema manualmente
+st.markdown("""
+    <style>
+    :root {
+        --primary-color: #008fc4;
+        --background-color: #003041;
+        --secondary-background-color: #ff0202;
+        --text-color: #fcfdff;
+        --font: sans-serif;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
