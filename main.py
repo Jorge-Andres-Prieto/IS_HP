@@ -3,7 +3,6 @@ from streamlit_option_menu import option_menu
 from login import login
 from leer_archivo import main_program
 
-# Inicializar estado de sesión
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
@@ -12,31 +11,16 @@ def logout():
     st.session_state['username'] = None
     st.rerun()
 
-
 def main_menu(user):
     with st.sidebar:
         selected = option_menu(
-            menu_title=None,  # Quitamos el título del menú
+            menu_title=None,
             options=["Home", "Excel"],
-            icons=["house-door", "file-earmark-spreadsheet"],
-            menu_icon="cast",
-            default_index=0,
-            styles={
-                "container": {"padding": "0!important", "background-color": "#fafafa"},
-                "icon": {"color": "#0096c7", "font-size": "25px"},
-                "nav-link": {
-                    "font-size": "18px",
-                    "text-align": "left",
-                    "margin": "0px",
-                    "--hover-color": "#eee",
-                    "font-weight": "normal",
-                },
-                "nav-link-selected": {"background-color": "#0096c7", "color": "white"},
-            }
+            icons=["house", "file-earmark-excel"],
+            menu_icon="list",
+            default_index=0
         )
-
-        st.sidebar.markdown("---")
-        if st.sidebar.button("Cerrar Sesión", key="logout"):
+        if st.button("Cerrar Sesión"):
             logout()
 
     if selected == "Home":
