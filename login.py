@@ -5,16 +5,14 @@ USERS = {
     "usuario2": "password2",
 }
 
-
 def login():
-    st.markdown("<h1 style='text-align: center;'>HelPharma</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #003041;'>HelPharma</h1>", unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-
-        username = st.text_input("Usuario")
-        password = st.text_input("Contraseña", type="password")
+        username = st.text_input("Usuario", key="username")
+        password = st.text_input("Contraseña", type="password", key="password")
         login_button = st.button("Ingresar", use_container_width=True)
 
         if login_button:
