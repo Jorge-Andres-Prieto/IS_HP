@@ -16,6 +16,6 @@ def login():
         if username in USERS and USERS[username] == password:
             st.session_state['logged_in'] = True
             st.session_state['username'] = username
-            st.experimental_rerun()  # Fuerza la recarga de la página para reflejar el cambio de estado
+            st.rerun()
         else:
             st.error("Username or password is incorrect")

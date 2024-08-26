@@ -10,7 +10,7 @@ if 'logged_in' not in st.session_state:
 def logout():
     st.session_state['logged_in'] = False
     st.session_state['username'] = None
-    st.experimental_rerun()  # Fuerza la recarga de la página para reflejar el cambio de estado
+    st.rerun()
 
 def main_menu(user):
     with st.sidebar:
