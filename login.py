@@ -12,8 +12,7 @@ def login():
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-        st.write("##")  # Espacio vertical
-        st.markdown("#### Iniciar sesión", unsafe_allow_html=True)
+
         username = st.text_input("Usuario")
         password = st.text_input("Contraseña", type="password")
         login_button = st.button("Ingresar", use_container_width=True)
@@ -26,9 +25,7 @@ def login():
             else:
                 st.error("Usuario o contraseña incorrectos")
 
-        st.write("---")  # Línea divisoria
-        st.markdown("<p style='text-align: center;'>¿No tienes una cuenta? <a href='#'>Regístrate</a></p>",
-                    unsafe_allow_html=True)
+        st.write("---")
 
     # Espacio vertical al final
     st.write("##")

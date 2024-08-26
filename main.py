@@ -15,11 +15,11 @@ st.set_page_config(
 st.markdown("""
     <style>
     .stApp {
-        background-color: #003041;
+        background-color: ##fcfdff;
         color: #fcfdff;
     }
     .stButton>button {
-        background-color: #008fc4;
+        background-color: ##003041;
         color: #fcfdff;
     }
     .stTextInput>div>div>input {
