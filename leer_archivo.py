@@ -7,6 +7,14 @@ def process_excel_file(uploaded_file):
     # Leer el archivo de Excel
     df = pd.read_excel(uploaded_file, sheet_name='CORRIENTE')
 
+    #Cargar el archivo de Excel utilizando openpyxl para obtener las fórmulas
+    workbook = openpyxl.load_workbook(uploaded_file, data_only=False) #Para obtener fórmulas
+    sheet = workbook['CORRIENTE']
+
+    #Identificar las columnas 'RECIBO' y 'VALOR'
+    recibo_col = df.columns.get_loc('RECIBO')
+    valor_col = df.columns.get_loc('VALOR')
+
     # Crear una lista para almacenar los nuevos dataframes
     new_dfs = []
 
@@ -14,13 +22,16 @@ def process_excel_file(uploaded_file):
     for index, row in df.iterrows():
         recibos = str(row['RECIBO']).split('-')
 
-        # Verificar si la columna VALOR contiene una fórmula con operaciones matemáticas
-        if isinstance(row['VALOR'], str) and re.match(r"^=[\d+\-\*/]+$", row['VALOR']):
-            # Extraer los números de la fórmula y el operador matemático
-            valores = re.findall(r'\d+', row['VALOR'])
-            operador = re.findall(r'[\+\-]', row['VALOR'])
+        #Obtener la fórmula de la celda correspondiente en 'VALOR' usando openpyxl
+        valor_formula = sheet.cell(index + 2, valor_col + 1).value #+2 por indice y encabezado de excel
 
-            if len(valores) == 2 and len(operador) == 1:
+        # Verificar si la columna VALOR contiene una fórmula con operaciones matemáticas
+        if isinstance(valor_formula, str) and re.match(r"^=[\d+\-\*/]+$", valor_formula):
+            # Extraer los números de la fórmula y el operador matemático
+            valores = re.findall(r'\d+', valor_formula)
+            operador = re.findall(r'[\+\-]', valor_formula)
+
+            if len(valores) == len(recibos) and len(operador) == len(valores) - 1:
                 # Asignar los valores separados a las filas correspondientes
                 for i, recibo in enumerate(recibos):
                     new_row = row.copy()
