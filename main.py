@@ -15,10 +15,10 @@ st.markdown("""
     <style>
     .stApp {
         background-color: #fcfdff;
-        color: #008fc4;
+        color: #003041;
     }
     .stButton>button {
-        background-color: #fe0000;
+        background-color: #003041;
         color: #fcfdff;
     }
     .stTextInput>div>div>input {
