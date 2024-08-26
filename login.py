@@ -1,25 +1,18 @@
 import streamlit as st
 
-# Diccionario con los usuarios y contraseñas
+# Datos de usuarios y contraseñas (puedes cambiarlo a leer desde secrets)
 USERS = {
     "usuario1": "password1",
     "usuario2": "password2",
 }
 
-def verify_user(username, password):
-    if USERS.get(username) == password:
-        return username
-    return None
-
-def login_page():
-    st.title("HelPharma Login")
-    username = st.text_input("Nombre de Usuario")
-    password = st.text_input("Contraseña", type="password")
-
-    if st.button("Ingresar"):
-        user = verify_user(username, password)
-        if user:
-            st.session_state['user'] = user
-            st.experimental_rerun()
+def login():
+    st.title("Login")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        if username in USERS and USERS[username] == password:
+            st.session_state['logged_in'] = True
+            st.session_state['username'] = username
         else:
-            st.error("Usuario o contraseña incorrectos.")
+            st.error("Username or password is incorrect")
