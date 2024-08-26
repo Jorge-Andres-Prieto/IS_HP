@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Datos de usuarios y contraseñas (puedes cambiarlo a leer desde secrets)
+# Datos de usuarios y contraseñas
 USERS = {
     "usuario1": "password1",
     "usuario2": "password2",
@@ -10,9 +10,12 @@ def login():
     st.title("Login")
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
-    if st.button("Login"):
+    login_button = st.button("Login")
+
+    if login_button:
         if username in USERS and USERS[username] == password:
             st.session_state['logged_in'] = True
             st.session_state['username'] = username
+            st.experimental_rerun()  # Fuerza la recarga de la página para reflejar el cambio de estado
         else:
             st.error("Username or password is incorrect")
