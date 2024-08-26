@@ -1,6 +1,6 @@
 import streamlit as st
 from login import login
-from leer_archivo import main_program  # Asumiendo que el código principal está en una función llamada main_program
+from leer_archivo import main_program
 
 # Inicializar estado de sesión
 if 'logged_in' not in st.session_state:
@@ -11,9 +11,12 @@ def logout():
     st.session_state['username'] = None
 
 def main():
+    st.write("Inicializando...")
     if not st.session_state['logged_in']:
+        st.write("No estás logueado")
         login()
     else:
+        st.write("Estás logueado")
         with st.sidebar:
             selected = st.selectbox(
                 "HelPharma",
@@ -27,6 +30,7 @@ def main():
             st.write("Bienvenido a HelPharma")
         elif selected == "Excel":
             main_program()
+
 
 if __name__ == "__main__":
     main()
