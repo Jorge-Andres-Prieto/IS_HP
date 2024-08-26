@@ -1,28 +1,22 @@
 import streamlit as st
-from login import login
-from leer_archivo import main_program  # Importa tu programa principal
+from login import login_page
+from leer_archivo import main_program
 
+# Comprueba si el usuario ha iniciado sesión
+if 'user' not in st.session_state:
+    login_page()
+else:
+    with st.sidebar:
+        selected = st.selectbox(
+            "HelPharma",
+            ["Home", "Excel"],
+            index=0
+        )
+        if st.button("Cerrar Sesión"):
+            del st.session_state['user']
+            st.experimental_rerun()
 
-def main():
-    # Inicializa el estado de sesión al iniciar
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
-        if not st.session_state['logged_in']:
-            login()
-        else:
-            with st.sidebar:
-                selected = st.selectbox(
-                    "HelPharma",
-                    ["Home", "Excel"],
-                    index=0
-                )
-                if st.button("Cerrar Sesión"):
-                    st.session_state['logged_in'] = False
-
-            if selected == "Home":
-                st.write("Bienvenido a HelPharma")
-            elif selected == "Excel":
-                main_program()
-
-if __name__ == "__main__":
-    main()
+    if selected == "Home":
+        st.write("Bienvenido a HelPharma")
+    elif selected == "Excel":
+        main_program()
