@@ -15,11 +15,17 @@ def logout():
 def main_menu(user):
     with st.sidebar:
         selected = option_menu(
-            None,
-            ["Home", "Excel"],
-            icons=["house", "file-excel"],
-            menu_icon="list",
-            default_index=0
+            menu_title="HelPharma",
+            options=["Home", "Excel"],
+            icons=["house-fill", "file-earmark-excel-fill"],  # Iconos para las opciones
+            menu_icon="capsule",  # Icono para el título
+            default_index=0,
+            styles={
+                "container": {"padding": "5!important", "background-color": "#fafafa"},
+                "icon": {"color": "orange", "font-size": "25px"},
+                "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
+                "nav-link-selected": {"background-color": "#02ab21"},
+            }
         )
         if st.button("Cerrar Sesión"):
             logout()
