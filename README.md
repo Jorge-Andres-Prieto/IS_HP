@@ -1,9 +1,9 @@
-# 🧾 Organizador de Informes Bancarios
+<h1 align="center">🧾 Procesador de informes Bancarios</h1>
 
-### 🌐 [Haz clic aquí para ir a la App](https://proyecto-empresa.streamlit.app/)
+<h3 align="center">Dale clic para ir a la App</h3>
 <p align="center">
   <a href="https://proyecto-empresa.streamlit.app/">
-    <img src="https://img.shields.io/badge/Organizador%20de%20Informes%20Bancarios-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Organizador de Informes Bancarios" style="vertical-align: middle;">
+    <img src="https://img.shields.io/badge/Organizador%20de%20Informes%20Bancarios-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Procesador de informes Bancarios" style="vertical-align: middle;">
   </a>
 </p>
 
@@ -33,9 +33,9 @@
 
 ## 💻 Uso de Tecnologías
 
-**Organizador de Informes Bancarios** utiliza las siguientes tecnologías:
+**Procesador de informes Bancarios** utiliza las siguientes tecnologías:
 
-<p align="center">
+<p>
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white"/>
   <img src="https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white"/>
